@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#111827"><link rel="manifest" id="manifest"><link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>✓</text></svg>">
+<title>WL OS 2.0 — Sistema Operacional Pessoal</title>
+<style>
+:root{--bg:#f5f6f8;--card:#fff;--text:#111827;--muted:#6b7280;--line:#e5e7eb;--accent:#111827;--green:#16a34a;--yellow:#d97706;--red:#dc2626;--blue:#2563eb}
+*{box-sizing:border-box}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--text)}
+.app{max-width:1100px;margin:auto;padding:22px}.top{display:flex;justify-content:space-between;align-items:center;gap:15px;margin-bottom:20px}
+.brand h1{margin:0;font-size:28px}.brand p{margin:5px 0;color:var(--muted)}
+button,input,select,textarea{font:inherit}button{border:0;cursor:pointer}.primary{background:var(--accent);color:white;padding:12px 16px;border-radius:12px;font-weight:700}
+.grid{display:grid;grid-template-columns:1.35fr .65fr;gap:18px}.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px;box-shadow:0 4px 20px #00000008}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px}.stat{padding:15px;border:1px solid var(--line);border-radius:14px;background:#fff}.stat b{display:block;font-size:25px}.stat span{font-size:13px;color:var(--muted)}
+.toolbar{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:15px}.toolbar input,.toolbar select,.field input,.field select,.field textarea{width:100%;padding:11px;border:1px solid var(--line);border-radius:10px;background:#fff;outline:none}.toolbar input{flex:1;min-width:180px}.task{border:1px solid var(--line);border-radius:14px;padding:14px;margin:10px 0;display:flex;gap:12px;align-items:flex-start}.check{width:24px;height:24px;border:2px solid #cbd5e1;border-radius:50%;flex:none;background:white}.task.done .check{background:var(--green);border-color:var(--green);position:relative}.task.done .check:after{content:"✓";color:#fff;position:absolute;left:4px;top:-1px;font-weight:800}.task-main{flex:1}.task-title{font-weight:750}.task.done .task-title{text-decoration:line-through;color:var(--muted)}.meta{display:flex;gap:7px;flex-wrap:wrap;margin-top:7px;font-size:12px;color:var(--muted)}.badge{padding:4px 8px;border-radius:999px;background:#f3f4f6}.status{font-weight:700}.status.Pendente{color:var(--red)}.status.Andamento{color:var(--yellow)}.status.Concluída,.status.Finalizada{color:var(--green)}.actions{display:flex;gap:6px}.icon{background:#f3f4f6;padding:8px;border-radius:9px}.empty{text-align:center;color:var(--muted);padding:35px 10px}.form{display:grid;gap:11px}.field label{display:block;font-size:12px;font-weight:700;margin-bottom:5px;color:#374151}.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}.report-row{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--line)}.bar{height:7px;background:#e5e7eb;border-radius:10px;overflow:hidden;margin-top:5px}.bar i{display:block;height:100%;background:var(--accent)}.small{font-size:12px;color:var(--muted)}.notice{font-size:12px;background:#f9fafb;border-radius:10px;padding:10px;color:var(--muted);margin-top:8px}
+@media(max-width:760px){.grid{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}.top{align-items:flex-start}.row{grid-template-columns:1fr}}
+
+.toast{position:fixed;right:18px;bottom:18px;background:#111827;color:#fff;padding:13px 16px;border-radius:12px;box-shadow:0 10px 35px #0003;display:none;z-index:10}
+.calendar{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}.calhead{font-size:11px;color:#6b7280;text-align:center;padding:5px}.calday{min-height:65px;border:1px solid #eee;border-radius:10px;padding:7px;background:#fff;font-size:12px}.calday.today{outline:2px solid #111827}.calday b{font-size:12px}.dot{display:block;font-size:10px;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tabs{display:flex;gap:6px;margin-bottom:15px}.tab{padding:8px 11px;border-radius:10px;background:#f3f4f6;font-weight:700;font-size:13px}.tab.active{background:#111827;color:#fff}
+.kpi{font-size:12px;color:#6b7280;margin-top:4px}.progressline{height:10px;background:#eee;border-radius:20px;overflow:hidden}.progressline i{display:block;height:100%;background:#111827}
+.quick{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.quick button{padding:10px;border:1px solid #eee;border-radius:10px;background:#fff;font-weight:650}
+@media(max-width:760px){.calendar{gap:3px}.calday{min-height:55px;padding:5px}.quick{grid-template-columns:1fr 1fr}}
+
+.hero2{background:#fff;border:1px solid var(--line);border-radius:18px;padding:18px;margin-bottom:18px}
+.module-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.module{padding:14px;border:1px solid var(--line);border-radius:14px;background:#fff}.module strong{font-size:22px;display:block}.module span{font-size:12px;color:var(--muted)}
+.routine{display:flex;gap:8px;flex-wrap:wrap}.routine button{border:1px solid var(--line);background:#fff;padding:9px 11px;border-radius:10px;font-weight:700}.routine button.active{background:#111827;color:#fff}
+.daybar{display:flex;gap:8px;overflow:auto;padding-bottom:5px}.daychip{min-width:90px;padding:10px;border:1px solid var(--line);border-radius:12px;background:#fff;text-align:center}.daychip.active{background:#111827;color:#fff}
+.close-day{background:#111827;color:#fff;padding:12px 14px;border-radius:12px;font-weight:750;width:100%}
+@media(max-width:760px){.module-grid{grid-template-columns:repeat(2,1fr)}}
+
+.maincal{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px}.maincal-head{text-align:center;font-size:11px;color:var(--muted);padding:5px}.maincal-day{min-height:74px;border:1px solid var(--line);border-radius:11px;padding:7px;background:#fff;cursor:pointer}.maincal-day:hover{border-color:#9ca3af}.maincal-day.other{opacity:.45}.maincal-day.selected{outline:2px solid #111827}.maincal-day.today{background:#f9fafb}.calnum{font-weight:800}.calitem{display:block;font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:4px}.calmore{font-size:10px;color:var(--muted);margin-top:3px}
+@media(max-width:600px){.maincal{gap:3px}.maincal-day{min-height:62px;padding:5px}.calitem{font-size:9px}.maincal-head{font-size:10px}}
+
+#loginGate{position:fixed;inset:0;background:#f5f6f8;display:flex;align-items:center;justify-content:center;padding:20px;z-index:9999}
+.login-card{width:min(420px,100%);background:#fff;border:1px solid #e5e7eb;border-radius:22px;padding:30px;box-shadow:0 20px 70px #00000012}
+.login-logo{width:64px;height:64px;border-radius:18px;background:#111827;color:#fff;display:grid;place-items:center;font-size:23px;font-weight:900;margin-bottom:18px}
+.login-card h1{margin:0;font-size:30px}.login-card p{color:#6b7280;margin:6px 0 24px}.login-field{margin-bottom:13px}.login-field label{display:block;font-size:12px;font-weight:800;margin-bottom:6px}.login-field input{width:100%;padding:13px 14px;border:1px solid #d1d5db;border-radius:12px;outline:none;font-size:16px}.login-field input:focus{border-color:#111827;box-shadow:0 0 0 3px #11182712}.login-btn{width:100%;padding:13px;border-radius:12px;background:#111827;color:#fff;font-weight:800;font-size:15px;margin-top:5px}.login-error{color:#dc2626;font-size:13px;margin-top:10px;min-height:18px}.logout-btn{margin-left:6px}
+</style>
+</head>
+<body>
+<div id="loginGate">
+  <div class="login-card">
+    <div class="login-logo">WL</div>
+    <h1>WL OS</h1>
+    <p>Sistema Operacional Pessoal</p>
+    <form id="loginForm">
+      <div class="login-field"><label for="loginUser">USUÁRIO</label><input id="loginUser" autocomplete="username" required value="Weslen"></div>
+      <div class="login-field"><label for="loginPass">SENHA</label><input id="loginPass" type="password" autocomplete="current-password" required placeholder="Digite sua senha"></div>
+      <button class="login-btn" type="submit">Entrar no WL OS</button>
+      <div id="loginError" class="login-error" aria-live="polite"></div>
+    </form>
+  </div>
+</div>
+
+<div class="app">
+  <div class="top">
+    <div class="brand"><h1>WL OS</h1><p id="today"></p></div>
+    <div><button class="primary" onclick="newTask()">＋ Nova tarefa</button><button class="icon logout-btn" onclick="logout()">Sair</button></div>
+  </div>
+
+  <div class="card" style="margin-bottom:18px;background:#111827;color:white;border:0">
+    <div style="display:flex;justify-content:space-between;gap:15px;align-items:center;flex-wrap:wrap">
+      <div>
+        <div style="font-size:12px;opacity:.65;letter-spacing:1.5px;font-weight:800">WESLEN LOPES • PERSONAL OPERATING SYSTEM</div>
+        <div style="font-size:25px;font-weight:800;margin-top:5px">Comande seu dia. Execute o que importa.</div>
+        <div style="opacity:.7;margin-top:5px;font-size:13px">Planejamento • Execução • Performance • Evolução</div>
+      </div>
+      <div style="text-align:right"><div id="clock" style="font-size:27px;font-weight:800"></div><div style="font-size:12px;opacity:.65">WL OS TIME</div></div>
+    </div>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><b id="total">0</b><span>Total</span></div>
+    <div class="stat"><b id="pending">0</b><span>Pendentes</span></div>
+    <div class="stat"><b id="progress">0</b><span>Em andamento</span></div>
+    <div class="stat"><b id="finished">0</b><span>Finalizadas</span></div>
+  </div>
+
+  <div class="card" style="margin-bottom:18px">
+    <div class="tabs"><button class="tab active" onclick="showPanel('agenda',this)">Agenda</button><button class="tab" onclick="showPanel('calendar',this)">Calendário</button><button class="tab" onclick="showPanel('insights',this)">Produtividade</button></div>
+    <div id="agendaPanel">
+      <div class="quick">
+        <button onclick="quickAdd('Ligação importante')">📞 Ligação</button>
+        <button onclick="quickAdd('Reunião')">🤝 Reunião</button>
+        <button onclick="quickAdd('Tarefa prioritária')">🔥 Prioridade</button>
+        <button onclick="quickAdd('Planejamento do dia')">🧭 Planejamento</button>
+        <button onclick="quickAdd('Follow-up de vendas')">💬 Follow-up</button>
+        <button onclick="quickAdd('Revisar investimentos')">📈 Investimentos</button>
+      </div>
+    </div>
+    <div id="calendarPanel" style="display:none"><div class="calendar" id="calendar"></div></div>
+    <div id="insightsPanel" style="display:none"><div id="insights"></div></div>
+  </div>
+
+  <div class="card" style="margin-bottom:18px">
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
+      <div><h2 style="margin:0">🎯 Foco de hoje</h2><div class="kpi">As tarefas mais importantes vêm primeiro.</div></div>
+      <button class="icon" onclick="focusMode()">⚡ Modo foco</button>
+    </div>
+    <div id="focusTasks" style="margin-top:10px"></div>
+  </div>
+
+  <div class="hero2">
+    <div style="display:flex;justify-content:space-between;gap:14px;align-items:center;flex-wrap:wrap">
+      <div>
+        <div style="font-size:11px;font-weight:800;letter-spacing:1.4px;color:var(--muted)">WL OS 2.0 • CENTRAL DE COMANDO</div>
+        <h2 style="margin:4px 0">Hoje é dia de execução.</h2>
+        <div class="small">Escolha suas prioridades, execute e feche o dia com clareza.</div>
+      </div>
+      <button class="close-day" style="width:auto" onclick="closeDay()">🌙 Fechar meu dia</button>
+    </div>
+    <div class="module-grid" style="margin-top:14px">
+      <div class="module"><strong id="todayScore">0%</strong><span>Score de execução</span></div>
+      <div class="module"><strong id="todayRemaining">0</strong><span>Missões restantes</span></div>
+      <div class="module"><strong id="todayHigh">0</strong><span>Alta prioridade</span></div>
+      <div class="module"><strong id="todayMinutes">0</strong><span>Min. planejados</span></div>
+    </div>
+    <div style="margin-top:15px"><b>Rotina</b><div class="routine" style="margin-top:8px">
+      <button onclick="quickAdd('Planejamento da manhã')">🌅 Manhã</button>
+      <button onclick="quickAdd('Treino')">🏋️ Treino</button>
+      <button onclick="quickAdd('Bloco de vendas')">💰 Vendas</button>
+      <button onclick="quickAdd('Revisão de investimentos')">📈 Investimentos</button>
+      <button onclick="quickAdd('Fechamento do dia')">🌙 Noite</button>
+    </div></div>
+  </div>
+
+  <div class="card" style="margin-bottom:18px">
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
+      <div><h2 style="margin:0">📅 Agenda</h2><div class="small">Veja suas tarefas por dia e toque em uma data para filtrar.</div></div>
+      <div style="display:flex;gap:6px;align-items:center">
+        <button class="icon" type="button" id="prevMonth">‹</button>
+        <b id="monthTitle"></b>
+        <button class="icon" type="button" id="nextMonth">›</button>
+      </div>
+    </div>
+    <div id="mainCalendar" style="margin-top:12px"></div>
+  </div>
+  <div class="grid">
+    <section class="card">
+      <div class="toolbar">
+        <input id="search" placeholder="Pesquisar tarefa..." oninput="render()">
+        <select id="filter" onchange="render()">
+          <option value="all">Todas</option><option>Pendente</option><option>Andamento</option><option>Concluída</option><option>Finalizada</option>
+        </select>
+        <select id="dayFilter" onchange="render()"><option value="all">Todos os dias</option><option value="today">Hoje</option><option value="tomorrow">Amanhã</option></select>
+        <button class="icon" onclick="exportData()">⬇ Exportar</button><button class="icon" onclick="document.getElementById('importFile').click()">⬆ Importar</button><input id="importFile" type="file" accept=".json" style="display:none" onchange="importData(event)">
+      </div>
+      <div id="tasks"></div>
+    </section>
+
+    <aside class="card">
+      <h2 style="margin-top:0">Nova missão</h2><div class="small" style="margin-bottom:5px">O WL OS mantém suas tarefas existentes e acrescenta novas funções sem apagar seus dados.</div>
+      <form class="form" onsubmit="saveTask(event)">
+        <div class="field"><label>Tarefa</label><input id="title" required placeholder="Ex.: Reunião com equipe de vendas"></div>
+        <div class="row">
+          <div class="field"><label>Data</label><input id="date" type="date" required></div>
+          <div class="field"><label>Horário / alarme</label><input id="time" type="time"></div>
+        </div>
+        <div class="row">
+          <div class="field"><label>Categoria</label><select id="category"><option>Empresa</option><option>Vendas</option><option>Pessoal</option><option>Treino</option><option>Investimentos</option><option>Outros</option></select></div>
+          <div class="field"><label>Status</label><select id="status"><option>Pendente</option><option>Andamento</option><option>Concluída</option><option>Finalizada</option></select></div>
+          <div class="field"><label>Prioridade</label><select id="priority"><option>Alta</option><option selected>Média</option><option>Baixa</option></select></div>
+        </div>
+        <div class="row">
+          <div class="field"><label>Tempo estimado (min)</label><input id="duration" type="number" min="0" step="5" placeholder="Ex.: 30"></div>
+          <div class="field"><label>Recorrência</label><select id="repeat"><option>Nenhuma</option><option>Diária</option><option>Semanal</option><option>Mensal</option></select></div>
+        </div>
+        <div class="field"><label>Observações</label><textarea id="notes" rows="3" placeholder="Detalhes, contatos, contexto..."></textarea></div>
+        <button class="primary" type="submit">Salvar tarefa</button>
+        <button type="button" class="icon" onclick="enableNotifications()">🔔 Ativar notificações</button>
+        <button type="button" class="icon" onclick="safeBackup()">🛡️ Fazer backup agora</button>
+        <div class="notice">Os dados ficam salvos neste dispositivo. O alarme usa notificações do navegador enquanto esta página estiver aberta.</div>
+      </form>
+
+      <hr style="border:0;border-top:1px solid var(--line);margin:22px 0">
+      <h2>Relatório</h2>
+      <div id="report"></div>
+    </aside>
+  </div>
+</div>
+
+<script>
+const WL_USER="Weslen", WL_PASS="12345678";
+const loginGate=document.getElementById("loginGate");
+function loggedIn(){return sessionStorage.getItem("wl_os_auth")==="1"}
+function showApp(){loginGate.style.display="none"}
+function logout(){sessionStorage.removeItem("wl_os_auth");location.reload()}
+document.getElementById("loginForm").addEventListener("submit",e=>{
+ e.preventDefault();
+ const u=document.getElementById("loginUser").value.trim(), p=document.getElementById("loginPass").value;
+ if(u===WL_USER && p===WL_PASS){sessionStorage.setItem("wl_os_auth","1");showApp()}
+ else document.getElementById("loginError").textContent="Usuário ou senha incorretos.";
+});
+if(loggedIn())showApp();
+
+const KEY="weslen_agenda_tasks_v1";
+let tasks=JSON.parse(localStorage.getItem(KEY)||"[]");
+const fmt=d=>new Date(d+"T12:00:00").toLocaleDateString("pt-BR",{weekday:"short",day:"2-digit",month:"2-digit"});
+const iso=d=>{let x=new Date();x.setDate(x.getDate()+d);return x.toISOString().slice(0,10)};
+document.getElementById("today").textContent=new Date().toLocaleDateString("pt-BR",{weekday:"long",day:"2-digit",month:"long",year:"numeric"});
+document.getElementById("date").value=iso(1);
+
+function persist(){
+  localStorage.setItem(KEY,JSON.stringify(tasks));
+  localStorage.setItem(KEY+"_backup",JSON.stringify({savedAt:new Date().toISOString(),tasks}));
+  render();renderMainCalendar();
+}
+function newTask(){document.getElementById("title").focus();window.scrollTo({top:0,behavior:"smooth"})}
+function saveTask(e){
+ e.preventDefault();
+ const t={id:Date.now(),title:title.value.trim(),date:date.value,time:time.value,status:status.value,priority:priority.value,category:category.value,duration:Number(duration.value)||0,repeat:repeat.value,notes:notes.value.trim(),created:Date.now()};
+ tasks.push(t);persist();e.target.reset();date.value=iso(1);status.value="Pendente";priority.value="Média";category.value="Empresa";
+duration.value="";repeat.value="Nenhuma";
+}
+function cycleStatus(t){
+ const order=["Pendente","Andamento","Concluída","Finalizada"],i=order.indexOf(t.status);
+ t.status=order[(i+1)%order.length];persist();
+}
+function removeTask(id){if(confirm("Excluir esta tarefa?")){tasks=tasks.filter(t=>t.id!==id);persist()}}
+function editTask(t){
+ title.value=t.title;date.value=t.date;time.value=t.time;status.value=t.status;priority.value=t.priority;category.value=t.category||"Empresa";duration.value=t.duration||"";repeat.value=t.repeat||"Nenhuma";notes.value=t.notes;
+ tasks=tasks.filter(x=>x.id!==t.id);render();window.scrollTo({top:0,behavior:"smooth"});title.focus();
+}
+
+function showPanel(name,btn){
+ ['agenda','calendar','insights'].forEach(x=>document.getElementById(x+'Panel').style.display=x===name?'block':'none');
+ document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));btn.classList.add('active');
+ if(name==='calendar')renderCalendar(); if(name==='insights')renderInsights();
+}
+function quickAdd(name){title.value=name;date.value=iso(1);window.scrollTo({top:0,behavior:'smooth'});title.focus()}
+function renderCalendar(){
+ const base=new Date(); const y=base.getFullYear(),m=base.getMonth(), first=new Date(y,m,1), last=new Date(y,m+1,0);
+ let s=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'].map(x=>`<div class="calhead">${x}</div>`).join('');
+ for(let i=0;i<first.getDay();i++)s+='<div></div>';
+ for(let d=1;d<=last.getDate();d++){let ds=`${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`, ts=tasks.filter(t=>t.date===ds);
+  s+=`<div class="calday ${ds===iso(0)?'today':''}"><b>${d}</b>${ts.slice(0,3).map(t=>`<span class="dot">• ${esc(t.title)}</span>`).join('')}${ts.length>3?`<span class="dot">+${ts.length-3} mais</span>`:''}</div>`;
+ } document.getElementById('calendar').innerHTML=s;
+}
+function renderInsights(){
+ let total=tasks.length, done=tasks.filter(t=>['Concluída','Finalizada'].includes(t.status)).length, rate=total?Math.round(done/total*100):0;
+ let cats={};tasks.forEach(t=>cats[t.category||'Outros']=(cats[t.category||'Outros']||0)+1);
+ document.getElementById('insights').innerHTML=`<div style="display:flex;justify-content:space-between"><b>Taxa de execução</b><b>${rate}%</b></div><div class="progressline" style="margin:8px 0 18px"><i style="width:${rate}%"></i></div>
+ <div class="report-row"><span>⏱ Total de tarefas</span><b>${total}</b></div><div class="report-row"><span>🔥 Alta prioridade</span><b>${tasks.filter(t=>t.priority==="Alta"&&!["Concluída","Finalizada"].includes(t.status)).length}</b></div><div class="report-row"><span>✅ Concluídas / finalizadas</span><b>${done}</b></div>
+ <h3>Por categoria</h3>${Object.entries(cats).sort((a,b)=>b[1]-a[1]).map(([k,v])=>`<div class="report-row"><span>${k}</span><b>${v}</b></div>`).join('')||'<div class="small">Ainda não há dados.</div>'}`;
+}
+function exportData(){let blob=new Blob([JSON.stringify(tasks,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='agenda-weslen-backup.json';a.click();URL.revokeObjectURL(a.href)}
+function importData(e){let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{try{let x=JSON.parse(r.result);if(Array.isArray(x)){tasks=x;persist();alert('Backup importado com sucesso.')}}catch{alert('Arquivo inválido.')}};r.readAsText(f)}
+
+function tickClock(){document.getElementById("clock").textContent=new Date().toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"})}
+setInterval(tickClock,1000);tickClock();
+function renderFocus(){
+ const el=document.getElementById("focusTasks");
+ let top=tasks.filter(t=>t.date===iso(0)&&!["Concluída","Finalizada"].includes(t.status)).sort((a,b)=>({Alta:0,Média:1,Baixa:2}[a.priority]-({Alta:0,Média:1,Baixa:2}[b.priority])||(a.time||"99:99").localeCompare(b.time||"99:99"))).slice(0,3);
+ el.innerHTML=top.length?top.map(t=>`<div class="task"><button class="check" onclick="cycleStatus(tasks.find(x=>x.id===${t.id}))"></button><div class="task-main"><div class="task-title">${esc(t.title)}</div><div class="meta"><span class="badge">${t.category||"Outros"}</span><span class="badge">${t.priority}</span>${t.time?`<span class="badge">⏰ ${t.time}</span>`:""}</div></div></div>`).join(""):'<div class="empty" style="padding:20px">Nenhuma prioridade pendente para hoje. Excelente. 👊🏾</div>';
+}
+function focusMode(){
+ const pending=tasks.filter(t=>!["Concluída","Finalizada"].includes(t.status));
+ if(!pending.length){alert("Você está em dia. Não há tarefas pendentes.");return}
+ let top=pending.sort((a,b)=>({Alta:0,Média:1,Baixa:2}[a.priority]-({Alta:0,Média:1,Baixa:2}[b.priority])))[0];
+ alert("MODO FOCO\\n\\nPróxima missão:\\n"+top.title+"\\n\\nPrioridade: "+top.priority+(top.time?"\\nHorário: "+top.time:""));
+}
+
+function todayTasks(){return tasks.filter(t=>t.date===iso(0))}
+function renderCommand(){
+ const ts=todayTasks(), active=ts.filter(t=>!["Concluída","Finalizada"].includes(t.status)), done=ts.filter(t=>["Concluída","Finalizada"].includes(t.status));
+ const total=ts.length, score=total?Math.round(done.length/total*100):0;
+ document.getElementById("todayScore").textContent=score+"%";
+ document.getElementById("todayRemaining").textContent=active.length;
+ document.getElementById("todayHigh").textContent=active.filter(t=>t.priority==="Alta").length;
+ document.getElementById("todayMinutes").textContent=ts.reduce((a,t)=>a+(Number(t.duration)||0),0);
+}
+function closeDay(){
+ const ts=todayTasks(), done=ts.filter(t=>["Concluída","Finalizada"].includes(t.status)).length;
+ if(!ts.length){alert("Não há tarefas registradas para hoje.");return}
+ const pct=Math.round(done/ts.length*100);
+ const pending=ts.filter(t=>!["Concluída","Finalizada"].includes(t.status)).length;
+ alert("FECHAMENTO WL OS\\n\\nExecução: "+pct+"%\\nFinalizadas: "+done+"\\nPendentes: "+pending+"\\n\\nAmanhã começa com clareza.");
+}
+function safeBackup(){
+ const payload={version:"WL-OS-2.0",exportedAt:new Date().toISOString(),tasks};
+ const blob=new Blob([JSON.stringify(payload,null,2)],{type:"application/json"});
+ const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="WL_OS_BACKUP_"+new Date().toISOString().slice(0,10)+".json";a.click();URL.revokeObjectURL(a.href);
+}
+
+let calendarCursor=new Date(new Date().getFullYear(),new Date().getMonth(),1);
+let selectedCalendarDate=iso(0);
+function dateKey(y,m,d){return `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`}
+function renderMainCalendar(){
+ const y=calendarCursor.getFullYear(), m=calendarCursor.getMonth();
+ document.getElementById("monthTitle").textContent=new Date(y,m,1).toLocaleDateString("pt-BR",{month:"long",year:"numeric"});
+ const first=new Date(y,m,1), days=new Date(y,m+1,0).getDate(), prevDays=new Date(y,m,0).getDate();
+ let s='<div class="maincal">'+["Dom","Seg","Ter","Qua","Qui","Sex","Sáb"].map(x=>`<div class="maincal-head">${x}</div>`).join("");
+ for(let i=first.getDay()-1;i>=0;i--){let d=prevDays-i, pm=m-1, py=y;if(pm<0){pm=11;py--}s+=calCell(dateKey(py,pm,d),d,true)}
+ for(let d=1;d<=days;d++)s+=calCell(dateKey(y,m,d),d,false);
+ let cells=first.getDay()+days;for(let d=1;cells<42;d++,cells++)s+=calCell(dateKey(y,m+1,d),d,true);
+ s+='</div>';document.getElementById("mainCalendar").innerHTML=s;
+ document.querySelectorAll("#mainCalendar [data-date]").forEach(el=>el.addEventListener("click",()=>{
+   selectedCalendarDate=el.dataset.date; dayFilter.value="all"; search.value=""; renderMainCalendar(); render();
+ }));
+}
+function calCell(ds,d,other){
+ const ts=tasks.filter(t=>t.date===ds), today=ds===iso(0), selected=ds===selectedCalendarDate;
+ return `<div class="maincal-day ${other?"other ":""}${today?"today ":""}${selected?"selected":""}" data-date="${ds}">
+   <div class="calnum">${d}</div>${ts.slice(0,3).map(t=>`<span class="calitem">• ${esc(t.title)}</span>`).join("")}${ts.length>3?`<div class="calmore">+${ts.length-3} mais</div>`:""}
+ </div>`;
+}
+function render(){
+ const q=search.value.toLowerCase(), f=filter.value, df=dayFilter.value;
+ let list=tasks.filter(t=>(!q||t.title.toLowerCase().includes(q)||t.notes.toLowerCase().includes(q))&&(f==="all"||t.status===f)&&(df==="all"||(df==="today"?t.date===iso(0):t.date===iso(1))));
+ list.sort((a,b)=>(a.date+a.time).localeCompare(b.date+b.time));
+ document.getElementById("total").textContent=tasks.length;
+ document.getElementById("pending").textContent=tasks.filter(t=>t.status==="Pendente").length;
+ document.getElementById("progress").textContent=tasks.filter(t=>t.status==="Andamento").length;
+ document.getElementById("finished").textContent=tasks.filter(t=>["Concluída","Finalizada"].includes(t.status)).length;
+ const el=document.getElementById("tasks");
+ el.innerHTML=list.length?list.map(t=>`<div class="task ${["Concluída","Finalizada"].includes(t.status)?"done":""}">
+  <button class="check" title="Avançar status" onclick="cycleStatus(tasks.find(x=>x.id===${t.id}))"></button>
+  <div class="task-main"><div class="task-title">${esc(t.title)}</div>
+  <div class="meta"><span class="badge">${fmt(t.date)}</span>${t.time?`<span class="badge">⏰ ${t.time}</span>`:""}<span class="badge">${t.category||"Outros"}</span><span class="badge">Prioridade: ${t.priority}</span><span class="status ${t.status}">${t.status}</span></div>
+  ${t.notes?`<div class="small" style="margin-top:8px">${esc(t.notes)}</div>`:""}</div>
+  <div class="actions"><button class="icon" onclick='editTask(${JSON.stringify(t)})'>✎</button><button class="icon" onclick="removeTask(${t.id})">×</button></div>
+ </div>`).join(""):`<div class="empty">Nenhuma tarefa encontrada.<br><span class="small">Comece adicionando o que precisa fazer.</span></div>`;
+ const counts=["Pendente","Andamento","Concluída","Finalizada"].map(s=>[s,tasks.filter(t=>t.status===s).length]);
+ renderFocus();renderCommand();
+ document.getElementById("report").innerHTML=counts.map(([s,n])=>`<div class="report-row"><div><b>${s}</b><div class="bar" style="width:180px"><i style="width:${tasks.length?Math.round(n/tasks.length*100):0}%"></i></div></div><b>${n}</b></div>`).join("");
+}
+function esc(s){return s.replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]))}
+async function enableNotifications(){
+ if(!("Notification"in window)){alert("Este navegador não oferece notificações.");return}
+ const p=await Notification.requestPermission(); alert(p==="granted"?"Notificações ativadas.":"Permissão não concedida.");
+}
+setInterval(()=>{
+ const now=new Date(), key=now.toISOString().slice(0,10), tm=now.toTimeString().slice(0,5);
+ tasks.forEach(t=>{if(t.date===key&&t.time===tm&&!["Concluída","Finalizada"].includes(t.status)&&!t.alerted){if("Notification"in window&&Notification.permission==="granted")new Notification("Lembrete: "+t.title);t.alerted=true}});
+ localStorage.setItem(KEY,JSON.stringify(tasks));
+},30000);
+if(!localStorage.getItem(KEY+"_backup") && tasks.length) localStorage.setItem(KEY+"_backup",JSON.stringify({savedAt:new Date().toISOString(),tasks}));
+document.getElementById("prevMonth").addEventListener("click",()=>{calendarCursor.setMonth(calendarCursor.getMonth()-1);renderMainCalendar()});
+document.getElementById("nextMonth").addEventListener("click",()=>{calendarCursor.setMonth(calendarCursor.getMonth()+1);renderMainCalendar()});
+renderMainCalendar();render();renderFocus();renderCommand();
+</script>
+<div id="toast" class="toast"></div>
+<script>
+const manifest={name:"Agenda de Tarefas — Weslen",short_name:"Agenda Weslen",start_url:".",display:"standalone",theme_color:"#111827",background_color:"#f5f6f8",icons:[]};
+document.getElementById("manifest").href=URL.createObjectURL(new Blob([JSON.stringify(manifest)],{type:"application/json"}));
+</script>
+</body>
+</html>
